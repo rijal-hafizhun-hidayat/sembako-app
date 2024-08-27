@@ -2,12 +2,12 @@ import { defineStore } from 'pinia'
 import { reactive } from 'vue'
 
 export const userAuthStore = defineStore('auth', () => {
-  type user = {
+  type User = {
     name: string | null
     token: string | null
   }
 
-  const user: user = reactive({
+  const user: User = reactive({
     name: '',
     token: ''
   })
