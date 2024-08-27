@@ -9,27 +9,29 @@ import axios from 'axios'
 import { userAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
 
+type Form = {
+  email: string
+  password: string
+}
+
 const router = useRouter()
 const auth = userAuthStore()
-const form = reactive({
-  username: null,
-  password: null
+const form: Form = reactive({
+  email: '',
+  password: ''
 })
 const validation = ref<any>([])
 
 const sendData = () => {
   axios
     .post('login', {
-      username: form.username,
+      email: form.email,
       password: form.password
     })
     .then((res) => {
-      auth.user.token = res.data.data.token
-      auth.user.name = res.data.data.name
-
-      return router.push({
-        name: 'dashboard.index'
-      })
+      console.log(res)
+      auth.user.token = res.data.data.token as string
+      auth.user.name = res.data.data.name as string
     })
     .catch((err) => {
       console.log(err)
@@ -46,8 +48,8 @@ const showRegisterForm = () => {
       <div class="space-y-4">
         <div>
           <InputLabel>Username</InputLabel>
-          <TextInput class="mt-1 block w-full" type="text" v-model="form.username" autofocus />
-          <InputError v-if="validation.username" :message="validation.username._errors[0]" />
+          <TextInput class="mt-1 block w-full" type="text" v-model="form.email" autofocus />
+          <InputError v-if="validation.email" :message="validation.email._errors[0]" />
         </div>
 
         <div>
