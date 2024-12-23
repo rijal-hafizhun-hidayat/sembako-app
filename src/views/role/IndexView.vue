@@ -7,11 +7,12 @@ import { Timestamp } from '@/utils/timestamp'
 import type { AxiosError, AxiosResponse } from 'axios'
 import { onMounted, ref, type Ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { SweetAlert } from '@/utils/sweetalert'
 
 interface Fetch {
   statusCode: number
   message: string
-  data: Role[]
+  data: Role[] | Role
 }
 interface Role {
   id: number
@@ -22,6 +23,7 @@ interface Role {
 
 const router = useRouter()
 const isLoading: Ref<boolean> = ref(false)
+const isLoadingButton: Ref<boolean> = ref(false)
 const roles: Ref<Role[]> = ref([])
 
 onMounted(async () => {
@@ -41,6 +43,20 @@ const toCreateRoleView = () => {
   router.push({
     name: 'role.create',
   })
+}
+
+const destroyRoleByRoleId = async (roleId: number) => {
+  try {
+    isLoadingButton.value = true
+    const result: AxiosResponse<Fetch> = await api.delete(`role/${roleId}`)
+    SweetAlert.successAlert(result.data.message)
+    roles.value = roles.value.filter((role) => role.id !== roleId)
+  } catch (error) {
+    const err = error as AxiosError
+    console.log(err)
+  } finally {
+    isLoadingButton.value = false
+  }
 }
 </script>
 <template>
@@ -84,10 +100,15 @@ const toCreateRoleView = () => {
               </td>
               <td class="border-t items-center px-6 py-4 flex justify-start space-x-4">
                 <div>
-                  <PrimaryButton type="button">Update</PrimaryButton>
+                  <PrimaryButton :disabled="isLoadingButton" type="button">Update</PrimaryButton>
                 </div>
                 <div>
-                  <DangerButton type="button">Delete</DangerButton>
+                  <DangerButton
+                    :disabled="isLoadingButton"
+                    @click="destroyRoleByRoleId(role.id)"
+                    type="button"
+                    >Delete</DangerButton
+                  >
                 </div>
               </td>
             </tr>

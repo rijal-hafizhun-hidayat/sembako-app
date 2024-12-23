@@ -24,6 +24,7 @@ api.interceptors.response.use(
   },
   (error) => {
     const err = error as AxiosError
+    console.log(err)
     NProgress.done()
     if (err.response?.status === 403) {
       router.push({
