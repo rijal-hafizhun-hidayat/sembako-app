@@ -58,6 +58,15 @@ const destroyRoleByRoleId = async (roleId: number) => {
     isLoadingButton.value = false
   }
 }
+
+const toShowRoleView = (roleId: number) => {
+  router.push({
+    name: 'role.show',
+    params: {
+      roleId: roleId,
+    },
+  })
+}
 </script>
 <template>
   <DashboardLayout>
@@ -100,7 +109,12 @@ const destroyRoleByRoleId = async (roleId: number) => {
               </td>
               <td class="border-t items-center px-6 py-4 flex justify-start space-x-4">
                 <div>
-                  <PrimaryButton :disabled="isLoadingButton" type="button">Update</PrimaryButton>
+                  <PrimaryButton
+                    @click="toShowRoleView(role.id)"
+                    :disabled="isLoadingButton"
+                    type="button"
+                    >Update</PrimaryButton
+                  >
                 </div>
                 <div>
                   <DangerButton

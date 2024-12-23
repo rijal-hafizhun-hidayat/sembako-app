@@ -3,6 +3,7 @@ import LoginIndexView from '@/views/login/IndexView.vue'
 import DashboardIndexView from '@/views/dashboard/IndexView.vue'
 import RoleIndexView from '@/views/role/IndexView.vue'
 import RoleCreateView from '@/views/role/CreateView.vue'
+import RoleShowView from '@/views/role/ShowView.vue'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import { useAuthStore } from '@/stores/auth'
@@ -37,6 +38,11 @@ const router = createRouter({
           path: 'create',
           name: 'role.create',
           component: RoleCreateView,
+        },
+        {
+          path: ':roleId',
+          name: 'role.show',
+          component: RoleShowView,
         },
       ],
       meta: {
