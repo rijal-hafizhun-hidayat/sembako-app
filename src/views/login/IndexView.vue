@@ -33,7 +33,7 @@ const send = async () => {
   try {
     isLoading.value = true
     await authStore.login(form)
-    return router.push({ name: 'dashboard.index' })
+    router.push({ name: 'dashboard.index' })
   } catch (error) {
     const err = error as AxiosError
     if (err.response?.status === 400) {
