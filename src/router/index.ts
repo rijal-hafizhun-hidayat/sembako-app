@@ -1,6 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LoginIndexView from '@/views/login/IndexView.vue'
 import DashboardIndexView from '@/views/dashboard/IndexView.vue'
+import RoleIndexView from '@/views/role/IndexView.vue'
+import RoleCreateView from '@/views/role/CreateView.vue'
+import RoleShowView from '@/views/role/ShowView.vue'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import { useAuthStore } from '@/stores/auth'
@@ -18,6 +21,30 @@ const router = createRouter({
       path: '/dashboard',
       name: 'dashboard.index',
       component: DashboardIndexView,
+      meta: {
+        requiresAuth: true,
+        requiresRoles: ['admin'],
+      },
+    },
+    {
+      path: '/role',
+      children: [
+        {
+          path: '',
+          name: 'role.index',
+          component: RoleIndexView,
+        },
+        {
+          path: 'create',
+          name: 'role.create',
+          component: RoleCreateView,
+        },
+        {
+          path: ':roleId',
+          name: 'role.show',
+          component: RoleShowView,
+        },
+      ],
       meta: {
         requiresAuth: true,
         requiresRoles: ['admin'],
