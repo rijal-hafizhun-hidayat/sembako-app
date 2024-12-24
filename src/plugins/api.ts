@@ -2,9 +2,7 @@ import axios, { AxiosError } from 'axios'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import router from '@/router'
-import { useAuthStore } from '@/stores/auth'
 
-const authStore = useAuthStore()
 const api = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL_API,
   withCredentials: true,
@@ -29,7 +27,6 @@ api.interceptors.response.use(
     console.log(err)
     NProgress.done()
     if (err.response?.status === 403 || err.response?.status === 401) {
-      authStore.unauthorized()
       router.push({
         name: 'login.index',
       })
