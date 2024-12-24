@@ -6,6 +6,7 @@ import RoleCreateView from '@/views/role/CreateView.vue'
 import RoleShowView from '@/views/role/ShowView.vue'
 import CategoryItemIndexView from '@/views/category-item/IndexView.vue'
 import CategoryItemCreateView from '@/views/category-item/CreateView.vue'
+import CategoryItemShowView from '@/views/category-item/ShowView.vue'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import { useAuthStore } from '@/stores/auth'
@@ -64,6 +65,11 @@ const router = createRouter({
           path: 'create',
           name: 'category-item.create',
           component: CategoryItemCreateView,
+        },
+        {
+          path: ':categoryItemId',
+          name: 'category-item.show',
+          component: CategoryItemShowView,
         },
       ],
     },

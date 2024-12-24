@@ -46,8 +46,17 @@ onMounted(async () => {
 })
 
 const toCategoryItemCreateView = () => {
-  return router.push({
+  router.push({
     name: 'category-item.create',
+  })
+}
+
+const toCategoryItemShowView = (categoryItemId: number) => {
+  router.push({
+    name: 'category-item.show',
+    params: {
+      categoryItemId: categoryItemId,
+    },
   })
 }
 
@@ -111,7 +120,12 @@ const deleteCategoryItemByCategoryItemId = async (categoryItemId: number) => {
               </td>
               <td class="border-t items-center px-6 py-4 flex justify-start space-x-4">
                 <div>
-                  <PrimaryButton :disabled="isLoadingButton" type="button">Update</PrimaryButton>
+                  <PrimaryButton
+                    @click="toCategoryItemShowView(categoryItem.id)"
+                    :disabled="isLoadingButton"
+                    type="button"
+                    >Update</PrimaryButton
+                  >
                 </div>
                 <div>
                   <DangerButton
