@@ -6,11 +6,14 @@ import api from '@/plugins/api'
 import { Timestamp } from '@/utils/timestamp'
 import type { AxiosError, AxiosResponse } from 'axios'
 import { onMounted, ref, type Ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { SweetAlert } from '@/utils/sweetalert'
+import { FormatErrors } from '@/utils/format-error'
 
 interface Fetch {
   statusCode: number
   message: string
-  data: CategoryItem[]
+  data: CategoryItem[] | CategoryItem
 }
 interface CategoryItem {
   created_at: Date
@@ -18,7 +21,13 @@ interface CategoryItem {
   name: string
   updated_at: Date
 }
+interface Validation {
+  statusCode: number
+  errors: Record<string, string[]>
+}
 
+const router = useRouter()
+const validation: Ref<Validation | null> = ref(null)
 const categoryItems: Ref<CategoryItem[]> = ref([])
 const isLoading: Ref<boolean> = ref(false)
 const isLoadingButton: Ref<boolean> = ref(false)
@@ -35,6 +44,27 @@ onMounted(async () => {
     isLoading.value = false
   }
 })
+
+const toCategoryItemCreateView = () => {
+  return router.push({
+    name: 'category-item.create',
+  })
+}
+
+const deleteCategoryItemByCategoryItemId = async (categoryItemId: number) => {
+  try {
+    const result: AxiosResponse<Fetch> = await api.delete(`category-item/${categoryItemId}`)
+    SweetAlert.successAlert(result.data.message)
+    categoryItems.value = categoryItems.value.filter(
+      (categoryItem) => categoryItem.id !== categoryItemId,
+    )
+  } catch (error) {
+    const err = error as AxiosError
+    validation.value = err.response?.data as Validation
+    const errors = FormatErrors.formatErrorMessage(validation.value.errors)
+    SweetAlert.errorAlert(errors)
+  }
+}
 </script>
 <template>
   <DashboardLayout>
@@ -42,6 +72,9 @@ onMounted(async () => {
       <div class="flex justify-between">
         <div>
           <h2 class="font-semibold text-xl text-gray-800 leading-tight">Category Item</h2>
+        </div>
+        <div>
+          <PrimaryButton @click="toCategoryItemCreateView()">Add Category Item</PrimaryButton>
         </div>
       </div>
     </template>
@@ -81,7 +114,12 @@ onMounted(async () => {
                   <PrimaryButton :disabled="isLoadingButton" type="button">Update</PrimaryButton>
                 </div>
                 <div>
-                  <DangerButton :disabled="isLoadingButton" type="button">Delete</DangerButton>
+                  <DangerButton
+                    @click="deleteCategoryItemByCategoryItemId(categoryItem.id)"
+                    :disabled="isLoadingButton"
+                    type="button"
+                    >Delete</DangerButton
+                  >
                 </div>
               </td>
             </tr>
