@@ -4,9 +4,9 @@ import DashboardIndexView from '@/views/dashboard/IndexView.vue'
 import RoleIndexView from '@/views/role/IndexView.vue'
 import RoleCreateView from '@/views/role/CreateView.vue'
 import RoleShowView from '@/views/role/ShowView.vue'
-import CategoryItemIndexView from '@/views/category-item/IndexView.vue'
-import CategoryItemCreateView from '@/views/category-item/CreateView.vue'
-import CategoryItemShowView from '@/views/category-item/ShowView.vue'
+import CategoryIndexView from '@/views/category/IndexView.vue'
+import CategoryCreateView from '@/views/category/CreateView.vue'
+import CategoryShowView from '@/views/category/ShowView.vue'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import { useAuthStore } from '@/stores/auth'
@@ -54,22 +54,22 @@ const router = createRouter({
       },
     },
     {
-      path: '/category-item',
+      path: '/category',
       children: [
         {
           path: '',
-          name: 'category-item.index',
-          component: CategoryItemIndexView,
+          name: 'category.index',
+          component: CategoryIndexView,
         },
         {
           path: 'create',
-          name: 'category-item.create',
-          component: CategoryItemCreateView,
+          name: 'category.create',
+          component: CategoryCreateView,
         },
         {
-          path: ':categoryItemId',
-          name: 'category-item.show',
-          component: CategoryItemShowView,
+          path: ':categoryId',
+          name: 'category.show',
+          component: CategoryShowView,
         },
       ],
     },

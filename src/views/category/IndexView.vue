@@ -13,9 +13,9 @@ import { FormatErrors } from '@/utils/format-error'
 interface Fetch {
   statusCode: number
   message: string
-  data: CategoryItem[] | CategoryItem
+  data: Category[] | Category
 }
-interface CategoryItem {
+interface Category {
   created_at: Date
   id: number
   name: string
@@ -28,15 +28,15 @@ interface Validation {
 
 const router = useRouter()
 const validation: Ref<Validation | null> = ref(null)
-const categoryItems: Ref<CategoryItem[]> = ref([])
+const categories: Ref<Category[]> = ref([])
 const isLoading: Ref<boolean> = ref(false)
 const isLoadingButton: Ref<boolean> = ref(false)
 
 onMounted(async () => {
   try {
     isLoading.value = true
-    const result: AxiosResponse<Fetch> = await api.get('category-item')
-    categoryItems.value = result.data.data as CategoryItem[]
+    const result: AxiosResponse<Fetch> = await api.get('category')
+    categories.value = result.data.data as Category[]
   } catch (error) {
     const err = error as AxiosError
     console.log(err)
@@ -45,28 +45,26 @@ onMounted(async () => {
   }
 })
 
-const toCategoryItemCreateView = () => {
+const toCategoryCreateView = () => {
   router.push({
-    name: 'category-item.create',
+    name: 'category.create',
   })
 }
 
-const toCategoryItemShowView = (categoryItemId: number) => {
+const toCategoryShowView = (categoryId: number) => {
   router.push({
-    name: 'category-item.show',
+    name: 'category.show',
     params: {
-      categoryItemId: categoryItemId,
+      categoryId: categoryId,
     },
   })
 }
 
-const deleteCategoryItemByCategoryItemId = async (categoryItemId: number) => {
+const deleteCategoryByCategoryId = async (categoryId: number) => {
   try {
-    const result: AxiosResponse<Fetch> = await api.delete(`category-item/${categoryItemId}`)
+    const result: AxiosResponse<Fetch> = await api.delete(`category/${categoryId}`)
     SweetAlert.successAlert(result.data.message)
-    categoryItems.value = categoryItems.value.filter(
-      (categoryItem) => categoryItem.id !== categoryItemId,
-    )
+    categories.value = categories.value.filter((category) => category.id !== categoryId)
   } catch (error) {
     const err = error as AxiosError
     validation.value = err.response?.data as Validation
@@ -80,10 +78,10 @@ const deleteCategoryItemByCategoryItemId = async (categoryItemId: number) => {
     <template #header>
       <div class="flex justify-between">
         <div>
-          <h2 class="font-semibold text-xl text-gray-800 leading-tight">Category Item</h2>
+          <h2 class="font-semibold text-xl text-gray-800 leading-tight">Category</h2>
         </div>
         <div>
-          <PrimaryButton @click="toCategoryItemCreateView()">Add Category Item</PrimaryButton>
+          <PrimaryButton @click="toCategoryCreateView()">Add Category</PrimaryButton>
         </div>
       </div>
     </template>
@@ -100,28 +98,28 @@ const deleteCategoryItemByCategoryItemId = async (categoryItemId: number) => {
               <th class="pb-4 pt-6 px-6">Action</th>
             </tr>
           </thead>
-          <tbody v-if="categoryItems.length > 0">
+          <tbody v-if="categories.length > 0">
             <tr
-              v-for="(categoryItem, index) in categoryItems"
-              :key="categoryItem.id"
+              v-for="(category, index) in categories"
+              :key="category.id"
               class="hover:bg-gray-100"
             >
               <td class="border-t items-center px-6 py-4">
                 {{ index + 1 }}
               </td>
               <td class="border-t items-center px-6 py-4">
-                {{ categoryItem.name }}
+                {{ category.name }}
               </td>
               <td class="border-t items-center px-6 py-4">
-                {{ Timestamp.formatTimestamp(categoryItem.created_at) }}
+                {{ Timestamp.formatTimestamp(category.created_at) }}
               </td>
               <td class="border-t items-center px-6 py-4">
-                {{ Timestamp.formatTimestamp(categoryItem.updated_at) }}
+                {{ Timestamp.formatTimestamp(category.updated_at) }}
               </td>
               <td class="border-t items-center px-6 py-4 flex justify-start space-x-4">
                 <div>
                   <PrimaryButton
-                    @click="toCategoryItemShowView(categoryItem.id)"
+                    @click="toCategoryShowView(category.id)"
                     :disabled="isLoadingButton"
                     type="button"
                     >Update</PrimaryButton
@@ -129,7 +127,7 @@ const deleteCategoryItemByCategoryItemId = async (categoryItemId: number) => {
                 </div>
                 <div>
                   <DangerButton
-                    @click="deleteCategoryItemByCategoryItemId(categoryItem.id)"
+                    @click="deleteCategoryByCategoryId(category.id)"
                     :disabled="isLoadingButton"
                     type="button"
                     >Delete</DangerButton
