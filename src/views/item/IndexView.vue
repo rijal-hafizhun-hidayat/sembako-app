@@ -6,6 +6,7 @@ import { onMounted, ref, type Ref } from 'vue'
 import type { AxiosError, AxiosResponse } from 'axios'
 import api from '@/plugins/api'
 import { Timestamp } from '@/utils/timestamp'
+import { useRouter } from 'vue-router'
 
 interface Fetch {
   statusCode: number
@@ -24,6 +25,7 @@ interface Item {
 const items: Ref<Item[]> = ref([])
 const isLoading: Ref<boolean> = ref(false)
 const isLoadingButton: Ref<boolean> = ref(false)
+const router = useRouter()
 
 onMounted(async () => {
   try {
@@ -37,6 +39,12 @@ onMounted(async () => {
     isLoading.value = false
   }
 })
+
+const toItemCreateView = () => {
+  router.push({
+    name: 'item.create',
+  })
+}
 </script>
 <template>
   <DashboardLayout>
@@ -46,7 +54,7 @@ onMounted(async () => {
           <h2 class="font-semibold text-xl text-gray-800 leading-tight">Item</h2>
         </div>
         <div>
-          <PrimaryButton>Add Item</PrimaryButton>
+          <PrimaryButton @click="toItemCreateView()">Add Item</PrimaryButton>
         </div>
       </div>
     </template>
