@@ -7,6 +7,7 @@ import RoleShowView from '@/views/role/ShowView.vue'
 import CategoryIndexView from '@/views/category/IndexView.vue'
 import CategoryCreateView from '@/views/category/CreateView.vue'
 import CategoryShowView from '@/views/category/ShowView.vue'
+import ItemIndexView from '@/views/item/IndexView.vue'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import { useAuthStore } from '@/stores/auth'
@@ -72,6 +73,24 @@ const router = createRouter({
           component: CategoryShowView,
         },
       ],
+      meta: {
+        requiresAuth: true,
+        requiresRoles: ['admin'],
+      },
+    },
+    {
+      path: '/item',
+      children: [
+        {
+          path: '',
+          name: 'item.index',
+          component: ItemIndexView,
+        },
+      ],
+      meta: {
+        requiresAuth: true,
+        requiresRoles: ['admin'],
+      },
     },
   ],
 })
