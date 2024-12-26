@@ -4,6 +4,7 @@ import InputLabel from '@/components/base/InputLabel.vue'
 import TextInput from '@/components/base/TextInput.vue'
 import PrimaryButton from '@/components/base/PrimaryButton.vue'
 import TextArea from '@/components/base/TextArea.vue'
+import InputError from '@/components/base/InputError.vue'
 import Multiselect from 'vue-multiselect'
 import { onMounted, reactive, ref, type Ref } from 'vue'
 import type { AxiosError, AxiosResponse } from 'axios'
@@ -111,17 +112,29 @@ const send = async () => {
           <div>
             <InputLabel>name</InputLabel>
             <TextInput class="block w-full mt-1" v-model="form.name" />
+            <InputError
+              v-if="validation && validation.statusCode === 400 && validation.errors.name"
+              :message="validation.errors.name[0]"
+            />
           </div>
           <div>
             <InputLabel>price</InputLabel>
             <TextInput type="number" class="block w-full mt-1" v-model="form.price" />
+            <InputError
+              v-if="validation && validation.statusCode === 400 && validation.errors.price"
+              :message="validation.errors.price[0]"
+            />
           </div>
           <div>
             <InputLabel>description</InputLabel>
             <TextArea class="block w-full mt-1" rows="8" v-model="form.description"></TextArea>
+            <InputError
+              v-if="validation && validation.statusCode === 400 && validation.errors.description"
+              :message="validation.errors.description[0]"
+            />
           </div>
           <div>
-            <InputLabel>Item</InputLabel>
+            <InputLabel>Category</InputLabel>
             <Multiselect
               :close-on-select="true"
               :clear-on-select="true"
@@ -136,6 +149,10 @@ const send = async () => {
               :multiple="false"
               :taggable="false"
             ></Multiselect>
+            <InputError
+              v-if="validation && validation.statusCode === 400 && validation.errors.category"
+              :message="validation.errors.category[0]"
+            />
           </div>
           <div>
             <PrimaryButton :disabled="isLoading" type="submit">submit</PrimaryButton>
