@@ -8,6 +8,8 @@ import CategoryIndexView from '@/views/category/IndexView.vue'
 import CategoryCreateView from '@/views/category/CreateView.vue'
 import CategoryShowView from '@/views/category/ShowView.vue'
 import ItemIndexView from '@/views/item/IndexView.vue'
+import ItemCreateView from '@/views/item/CreateView.vue'
+import ItemShowView from '@/views/item/ShowView.vue'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import { useAuthStore } from '@/stores/auth'
@@ -85,6 +87,16 @@ const router = createRouter({
           path: '',
           name: 'item.index',
           component: ItemIndexView,
+        },
+        {
+          path: 'create',
+          name: 'item.create',
+          component: ItemCreateView,
+        },
+        {
+          path: ':itemId',
+          name: 'item.show',
+          component: ItemShowView,
         },
       ],
       meta: {

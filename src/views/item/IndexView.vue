@@ -6,6 +6,8 @@ import { onMounted, ref, type Ref } from 'vue'
 import type { AxiosError, AxiosResponse } from 'axios'
 import api from '@/plugins/api'
 import { Timestamp } from '@/utils/timestamp'
+import { useRouter } from 'vue-router'
+import { SweetAlert } from '@/utils/sweetalert'
 
 interface Fetch {
   statusCode: number
@@ -24,6 +26,7 @@ interface Item {
 const items: Ref<Item[]> = ref([])
 const isLoading: Ref<boolean> = ref(false)
 const isLoadingButton: Ref<boolean> = ref(false)
+const router = useRouter()
 
 onMounted(async () => {
   try {
@@ -37,6 +40,32 @@ onMounted(async () => {
     isLoading.value = false
   }
 })
+
+const toItemCreateView = () => {
+  router.push({
+    name: 'item.create',
+  })
+}
+
+const toItemShowView = (itemId: number) => {
+  router.push({
+    name: 'item.show',
+    params: {
+      itemId: itemId,
+    },
+  })
+}
+
+const toDeleteItemByItemId = async (itemId: number) => {
+  try {
+    const result: AxiosResponse<Fetch> = await api.delete(`item/${itemId}`)
+    SweetAlert.successAlert(result.data.message)
+    items.value = items.value.filter((item) => item.id !== itemId)
+  } catch (error) {
+    const err = error as AxiosError
+    console.log(err)
+  }
+}
 </script>
 <template>
   <DashboardLayout>
@@ -46,7 +75,7 @@ onMounted(async () => {
           <h2 class="font-semibold text-xl text-gray-800 leading-tight">Item</h2>
         </div>
         <div>
-          <PrimaryButton>Add Item</PrimaryButton>
+          <PrimaryButton @click="toItemCreateView()">Add Item</PrimaryButton>
         </div>
       </div>
     </template>
@@ -79,10 +108,20 @@ onMounted(async () => {
               </td>
               <td class="border-t items-center px-6 py-4 flex justify-start space-x-4">
                 <div>
-                  <PrimaryButton :disabled="isLoadingButton" type="button">Update</PrimaryButton>
+                  <PrimaryButton
+                    @click="toItemShowView(item.id)"
+                    :disabled="isLoadingButton"
+                    type="button"
+                    >Update</PrimaryButton
+                  >
                 </div>
                 <div>
-                  <DangerButton :disabled="isLoadingButton" type="button">Delete</DangerButton>
+                  <DangerButton
+                    @click="toDeleteItemByItemId(item.id)"
+                    :disabled="isLoadingButton"
+                    type="button"
+                    >Delete</DangerButton
+                  >
                 </div>
               </td>
             </tr>

@@ -3,6 +3,7 @@ import { onMounted, ref, type Ref } from 'vue'
 
 defineProps({
   modelValue: {
+    type: String,
     required: true,
   },
 })
@@ -27,12 +28,10 @@ const handleInput = (event: Event) => {
   }
 }
 </script>
-
 <template>
-  <input
-    class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+  <textarea
     :value="modelValue"
     @input="handleInput"
-    ref="input"
-  />
+    class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+  ></textarea>
 </template>
