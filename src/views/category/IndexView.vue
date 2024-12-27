@@ -2,10 +2,11 @@
 import DashboardLayout from '@/layouts/DashboardLayout.vue'
 import PrimaryButton from '@/components/base/PrimaryButton.vue'
 import DangerButton from '@/components/base/DangerButton.vue'
+import TextInput from '@/components/base/TextInput.vue'
 import api from '@/plugins/api'
 import { Timestamp } from '@/utils/timestamp'
 import type { AxiosError, AxiosResponse } from 'axios'
-import { onMounted, ref, type Ref } from 'vue'
+import { computed, onMounted, ref, type Ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { SweetAlert } from '@/utils/sweetalert'
 import { FormatErrors } from '@/utils/format-error'
@@ -27,6 +28,7 @@ interface Validation {
 }
 
 const router = useRouter()
+const search: Ref<string> = ref('')
 const validation: Ref<Validation | null> = ref(null)
 const categories: Ref<Category[]> = ref([])
 const isLoading: Ref<boolean> = ref(false)
@@ -72,6 +74,11 @@ const deleteCategoryByCategoryId = async (categoryId: number) => {
     SweetAlert.errorAlert(errors)
   }
 }
+
+const searchCategoryByName = computed(() => {
+  const query = search.value.toLowerCase()
+  return categories.value.filter((category) => category.name.toLowerCase().includes(query))
+})
 </script>
 <template>
   <DashboardLayout>
@@ -88,6 +95,16 @@ const deleteCategoryByCategoryId = async (categoryId: number) => {
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="bg-white mt-10 px-4 py-6 rounded shadow-md overflow-x-auto">
+        <div class="grid grid-rows-1 sm:grid-cols-2 gap-3">
+          <div>
+            <TextInput v-model="search" placeholder="find category by name" class="block w-full" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="bg-white mt-10 px-4 py-6 rounded shadow-md overflow-x-auto">
         <table class="w-full whitespace-nowrap">
           <thead>
             <tr class="text-left font-bold">
@@ -100,7 +117,7 @@ const deleteCategoryByCategoryId = async (categoryId: number) => {
           </thead>
           <tbody v-if="categories.length > 0">
             <tr
-              v-for="(category, index) in categories"
+              v-for="(category, index) in searchCategoryByName"
               :key="category.id"
               class="hover:bg-gray-100"
             >
