@@ -7,6 +7,7 @@ import type { AxiosError, AxiosResponse } from 'axios'
 import api from '@/plugins/api'
 import { Timestamp } from '@/utils/timestamp'
 import { useRouter } from 'vue-router'
+import { SweetAlert } from '@/utils/sweetalert'
 
 interface Fetch {
   statusCode: number
@@ -44,6 +45,26 @@ const toItemCreateView = () => {
   router.push({
     name: 'item.create',
   })
+}
+
+const toItemShowView = (itemId: number) => {
+  router.push({
+    name: 'item.show',
+    params: {
+      itemId: itemId,
+    },
+  })
+}
+
+const toDeleteItemByItemId = async (itemId: number) => {
+  try {
+    const result: AxiosResponse<Fetch> = await api.delete(`item/${itemId}`)
+    SweetAlert.successAlert(result.data.message)
+    items.value = items.value.filter((item) => item.id !== itemId)
+  } catch (error) {
+    const err = error as AxiosError
+    console.log(err)
+  }
 }
 </script>
 <template>
@@ -87,10 +108,20 @@ const toItemCreateView = () => {
               </td>
               <td class="border-t items-center px-6 py-4 flex justify-start space-x-4">
                 <div>
-                  <PrimaryButton :disabled="isLoadingButton" type="button">Update</PrimaryButton>
+                  <PrimaryButton
+                    @click="toItemShowView(item.id)"
+                    :disabled="isLoadingButton"
+                    type="button"
+                    >Update</PrimaryButton
+                  >
                 </div>
                 <div>
-                  <DangerButton :disabled="isLoadingButton" type="button">Delete</DangerButton>
+                  <DangerButton
+                    @click="toDeleteItemByItemId(item.id)"
+                    :disabled="isLoadingButton"
+                    type="button"
+                    >Delete</DangerButton
+                  >
                 </div>
               </td>
             </tr>
