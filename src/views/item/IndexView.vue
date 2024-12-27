@@ -2,7 +2,8 @@
 import DashboardLayout from '@/layouts/DashboardLayout.vue'
 import PrimaryButton from '@/components/base/PrimaryButton.vue'
 import DangerButton from '@/components/base/DangerButton.vue'
-import { onMounted, ref, type Ref } from 'vue'
+import TextInput from '@/components/base/TextInput.vue'
+import { computed, onMounted, ref, type Ref } from 'vue'
 import type { AxiosError, AxiosResponse } from 'axios'
 import api from '@/plugins/api'
 import { Timestamp } from '@/utils/timestamp'
@@ -24,6 +25,7 @@ interface Item {
 }
 
 const items: Ref<Item[]> = ref([])
+const search: Ref<string> = ref('')
 const isLoading: Ref<boolean> = ref(false)
 const isLoadingButton: Ref<boolean> = ref(false)
 const router = useRouter()
@@ -66,6 +68,11 @@ const toDeleteItemByItemId = async (itemId: number) => {
     console.log(err)
   }
 }
+
+const searchItemByName = computed(() => {
+  const query = search.value.toLowerCase()
+  return items.value.filter((item) => item.name.toLowerCase().includes(query))
+})
 </script>
 <template>
   <DashboardLayout>
@@ -82,6 +89,16 @@ const toDeleteItemByItemId = async (itemId: number) => {
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="bg-white mt-10 px-4 py-6 rounded shadow-md overflow-x-auto">
+        <div class="grid grid-rows-1 sm:grid-cols-2 gap-3">
+          <div>
+            <TextInput v-model="search" placeholder="find category by name" class="block w-full" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="bg-white mt-10 px-4 py-6 rounded shadow-md overflow-x-auto">
         <table class="w-full whitespace-nowrap">
           <thead>
             <tr class="text-left font-bold">
@@ -93,7 +110,7 @@ const toDeleteItemByItemId = async (itemId: number) => {
             </tr>
           </thead>
           <tbody v-if="items.length > 0">
-            <tr v-for="(item, index) in items" :key="item.id" class="hover:bg-gray-100">
+            <tr v-for="(item, index) in searchItemByName" :key="item.id" class="hover:bg-gray-100">
               <td class="border-t items-center px-6 py-4">
                 {{ index + 1 }}
               </td>
