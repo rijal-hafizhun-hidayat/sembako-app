@@ -10,6 +10,7 @@ import CategoryShowView from '@/views/category/ShowView.vue'
 import ItemIndexView from '@/views/item/IndexView.vue'
 import ItemCreateView from '@/views/item/CreateView.vue'
 import ItemShowView from '@/views/item/ShowView.vue'
+import TransactionIndexView from '@/views/transaction/IndexView.vue'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import { useAuthStore } from '@/stores/auth'
@@ -103,6 +104,16 @@ const router = createRouter({
         requiresAuth: true,
         requiresRoles: ['admin'],
       },
+    },
+    {
+      path: '/transaction',
+      children: [
+        {
+          path: '',
+          name: 'transaction.index',
+          component: TransactionIndexView,
+        },
+      ],
     },
   ],
 })
