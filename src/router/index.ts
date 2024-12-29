@@ -11,6 +11,7 @@ import ItemIndexView from '@/views/item/IndexView.vue'
 import ItemCreateView from '@/views/item/CreateView.vue'
 import ItemShowView from '@/views/item/ShowView.vue'
 import TransactionIndexView from '@/views/transaction/IndexView.vue'
+import TransactionCreateView from '@/views/transaction/CreateView.vue'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import { useAuthStore } from '@/stores/auth'
@@ -112,6 +113,11 @@ const router = createRouter({
           path: '',
           name: 'transaction.index',
           component: TransactionIndexView,
+        },
+        {
+          path: 'create',
+          name: 'transaction.create',
+          component: TransactionCreateView,
         },
       ],
     },

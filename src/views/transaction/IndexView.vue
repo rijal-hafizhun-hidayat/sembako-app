@@ -2,6 +2,15 @@
 import DashboardLayout from '@/layouts/DashboardLayout.vue'
 import PrimaryButton from '@/components/base/PrimaryButton.vue'
 import DangerButton from '@/components/base/DangerButton.vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const toTransactionCreateView = () => {
+  router.push({
+    name: 'transaction.create',
+  })
+}
 </script>
 <template>
   <DashboardLayout>
@@ -11,7 +20,7 @@ import DangerButton from '@/components/base/DangerButton.vue'
           <h2 class="font-semibold text-xl text-gray-800 leading-tight">Transaction</h2>
         </div>
         <div>
-          <PrimaryButton>Add Transaction</PrimaryButton>
+          <PrimaryButton @click="toTransactionCreateView()">Add Transaction</PrimaryButton>
         </div>
       </div>
     </template>
