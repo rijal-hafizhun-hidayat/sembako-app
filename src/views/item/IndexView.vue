@@ -104,6 +104,7 @@ const searchItemByName = computed(() => {
             <tr class="text-left font-bold">
               <th class="pb-4 pt-6 px-6">#</th>
               <th class="pb-4 pt-6 px-6">Name</th>
+              <th class="pb-4 pt-6 px-6">Description</th>
               <th class="pb-4 pt-6 px-6">Created At</th>
               <th class="pb-4 pt-6 px-6">Updated At</th>
               <th class="pb-4 pt-6 px-6">Action</th>
@@ -116,6 +117,9 @@ const searchItemByName = computed(() => {
               </td>
               <td class="border-t items-center px-6 py-4">
                 {{ item.name }}
+              </td>
+              <td class="border-t items-center px-6 py-4">
+                {{ item.description }}
               </td>
               <td class="border-t items-center px-6 py-4">
                 {{ Timestamp.formatTimestamp(item.created_at) }}
