@@ -5,10 +5,11 @@ import TextInput from '@/components/base/TextInput.vue'
 import PrimaryButton from '@/components/base/PrimaryButton.vue'
 import DangerButton from '@/components/base/DangerButton.vue'
 import Multiselect from 'vue-multiselect'
-import { onMounted, reactive, ref, computed, type Ref } from 'vue'
+import { onMounted, reactive, ref, type Ref } from 'vue'
 import type { AxiosError, AxiosResponse } from 'axios'
 import api from '@/plugins/api'
 import { Number } from '@/utils/number'
+import { Format } from '@/utils/format'
 
 interface Form {
   item: Item | null
@@ -35,7 +36,8 @@ interface LabelProps {
 }
 
 const isLoading: Ref<boolean> = ref(false)
-const batchItemQuantities = ref<{ [key: number]: number }>({})
+const totalPrice: Ref<number> = ref(0)
+const batchItemQuantities = ref<number[]>([])
 const isLoadingMultiselect: Ref<boolean> = ref(false)
 const items: Ref<Item[]> = ref([])
 const batchItems: Ref<Item[]> = ref([])
@@ -63,29 +65,46 @@ const customLabel = ({ name, description, price }: LabelProps) => {
 const pushBatchTransaction = (item: Item | null) => {
   if (item != null) {
     batchItems.value.push(item)
+    batchItemQuantities.value.push(1)
+    calculateTotalPrice()
   }
 }
 
 const destroyBatchItemsByItemId = (value: Item) => {
-  batchItems.value = batchItems.value.filter((batchItem) => batchItem.id !== value.id)
-  form.total_price -= value.price
+  const index = batchItems.value.findIndex((batchItem) => batchItem.id === value.id)
+  if (index !== -1) {
+    batchItems.value.splice(index, 1)
+    batchItemQuantities.value.splice(index, 1)
+    calculateTotalPrice()
+  }
 }
 
-const itemTotalPrice = computed(() => {
-  return batchItems.value.map((item) => {
-    const quantity = batchItemQuantities.value[item.id] || 1
-    return {
-      ...item,
-      total: item.price * quantity,
-    }
-  })
-})
-
-const totalPrice = computed(() => {
-  return batchItems.value.reduce((total, item) => {
-    return total + item.price * (batchItemQuantities.value[item.id] || 1)
+const calculateTotalPrice = () => {
+  totalPrice.value = batchItems.value.reduce((total, item, index) => {
+    const quantity = batchItemQuantities.value[index] || 0
+    return total + item.price * quantity
   }, 0)
-})
+}
+
+const send = async () => {
+  batchItemQuantities.value = Format.combinationArrToNum(batchItemQuantities.value)
+  console.log(batchItemQuantities.value)
+  console.log(batchItems.value)
+  console.log(totalPrice.value)
+
+  try {
+    const result = await api.post('transaction', {
+      total_price: totalPrice.value,
+      qty_per_item: batchItemQuantities.value,
+      items: batchItems.value,
+    })
+
+    console.log(result)
+  } catch (error) {
+    const err = error as AxiosError
+    console.log(err)
+  }
+}
 </script>
 <template>
   <DashboardLayout>
@@ -99,7 +118,7 @@ const totalPrice = computed(() => {
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="bg-white mt-10 px-4 py-6 rounded shadow-md">
-        <form class="space-y-4">
+        <form @submit.prevent="send()" class="space-y-4">
           <div>
             <InputLabel>item</InputLabel>
             <Multiselect
@@ -128,7 +147,7 @@ const totalPrice = computed(() => {
                   <th class="pb-4 pt-6 px-6">Name</th>
                   <th class="pb-4 pt-6 px-6">Qty</th>
                   <th class="pb-4 pt-6 px-6">Price/item</th>
-                  <th class="pb-4 pt-6 px-6">Total Price</th>
+                  <th class="pb-4 pt-6 px-6">Total price/item</th>
                   <th class="pb-4 pt-6 px-6">Action</th>
                 </tr>
               </thead>
@@ -140,7 +159,9 @@ const totalPrice = computed(() => {
                   <td class="border-t items-center px-6 py-4">
                     <TextInput
                       type="number"
-                      v-model="batchItemQuantities[batchItem.id]"
+                      :required="true"
+                      v-model="batchItemQuantities[index]"
+                      @blur="calculateTotalPrice"
                       class="block"
                     />
                   </td>
@@ -148,7 +169,7 @@ const totalPrice = computed(() => {
                     {{ Number.formatRupiah(batchItem.price) }}
                   </td>
                   <td class="border-t items-center px-6 py-4">
-                    {{ Number.formatRupiah(itemTotalPrice[index].total) }}
+                    {{ Number.formatRupiah(batchItem.price * batchItemQuantities[index]) }}
                   </td>
                   <td class="border-t items-center px-6 py-4 flex justify-start space-x-4">
                     <div>
@@ -165,10 +186,11 @@ const totalPrice = computed(() => {
             <InputLabel>Total Price All Item</InputLabel>
             <input
               type="text"
+              :disabled="true"
               :value="Number.formatRupiah(totalPrice)"
               class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block w-full"
             />
-            <TextInput v-model="totalPrice" :hidden="true" :disable="true" />
+            <TextInput v-model="totalPrice" :hidden="true" :disabled="true" />
           </div>
           <div>
             <PrimaryButton :disabled="isLoading" type="submit">submit</PrimaryButton>
