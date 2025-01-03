@@ -3,12 +3,66 @@ import DashboardLayout from '@/layouts/DashboardLayout.vue'
 import PrimaryButton from '@/components/base/PrimaryButton.vue'
 import DangerButton from '@/components/base/DangerButton.vue'
 import { useRouter } from 'vue-router'
+import { onMounted, ref, type Ref } from 'vue'
+import type { AxiosError, AxiosResponse } from 'axios'
+import api from '@/plugins/api'
+import { SweetAlert } from '@/utils/sweetalert'
+import { Timestamp } from '@/utils/timestamp'
+
+interface Fetch {
+  statucCode: number
+  message: string
+  data: Transaction[]
+}
+interface Transaction {
+  id: number
+  total_price: number
+  created_at: Date
+  updated_at: Date
+}
 
 const router = useRouter()
+const isLoading: Ref<boolean> = ref(false)
+const transactions: Ref<Transaction[]> = ref([])
 
 const toTransactionCreateView = () => {
   router.push({
     name: 'transaction.create',
+  })
+}
+
+onMounted(async () => {
+  try {
+    isLoading.value = true
+    const result: AxiosResponse<Fetch> = await api.get('transaction')
+    transactions.value = result.data.data as Transaction[]
+  } catch (error) {
+    const err = error as AxiosError
+    console.log(err)
+  } finally {
+    isLoading.value = false
+  }
+})
+
+const destroyTransactionByTransactionId = async (transactionId: number) => {
+  try {
+    const result: AxiosResponse<Fetch> = await api.delete(`transaction/${transactionId}`)
+    SweetAlert.successAlert(result.data.message)
+    transactions.value = transactions.value.filter(
+      (transaction) => transaction.id !== transactionId,
+    )
+  } catch (error) {
+    const err = error as AxiosError
+    console.log(err)
+  }
+}
+
+const toDetailTransactionView = (transactionId: number) => {
+  router.push({
+    name: 'transaction.detail',
+    params: {
+      transactionId: transactionId,
+    },
   })
 }
 </script>
@@ -38,20 +92,44 @@ const toTransactionCreateView = () => {
               <th class="pb-4 pt-6 px-6">Action</th>
             </tr>
           </thead>
-          <tbody>
-            <tr class="hover:bg-gray-100">
-              <td class="border-t items-center px-6 py-4">1</td>
-              <td class="border-t items-center px-6 py-4">345</td>
-              <td class="border-t items-center px-6 py-4">500000</td>
-              <td class="border-t items-center px-6 py-4">12 januari 2025</td>
-              <td class="border-t items-center px-6 py-4">12 februari 2025</td>
+          <tbody v-if="transactions.length > 0">
+            <tr
+              v-for="(transaction, index) in transactions"
+              :key="transaction.id"
+              class="hover:bg-gray-100"
+            >
+              <td class="border-t items-center px-6 py-4">
+                {{ index + 1 }}
+              </td>
+              <td class="border-t items-center px-6 py-4">{{ transaction.id }}</td>
+              <td class="border-t items-center px-6 py-4">{{ transaction.total_price }}</td>
+              <td class="border-t items-center px-6 py-4">
+                {{ Timestamp.formatTimestamp(transaction.created_at) }}
+              </td>
+              <td class="border-t items-center px-6 py-4">
+                {{ Timestamp.formatTimestamp(transaction.updated_at) }}
+              </td>
               <td class="border-t items-center px-6 py-4 flex justify-start space-x-4">
                 <div>
-                  <PrimaryButton type="button">Update</PrimaryButton>
+                  <PrimaryButton @click="toDetailTransactionView(transaction.id)" type="button"
+                    >Detail</PrimaryButton
+                  >
                 </div>
                 <div>
-                  <DangerButton type="button">Delete</DangerButton>
+                  <DangerButton
+                    type="button"
+                    @click="destroyTransactionByTransactionId(transaction.id)"
+                    >Delete</DangerButton
+                  >
                 </div>
+              </td>
+            </tr>
+          </tbody>
+          <tbody v-else>
+            <tr class="hover:bg-gray-100">
+              <td class="border-t items-center px-6 py-4 text-center" colspan="5">
+                <span v-if="isLoading === true">loading ...</span>
+                <span v-else>data not found</span>
               </td>
             </tr>
           </tbody>
