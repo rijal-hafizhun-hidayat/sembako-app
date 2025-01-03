@@ -121,7 +121,7 @@ const router = createRouter({
           component: TransactionCreateView,
         },
         {
-          path: ':transactionId',
+          path: ':transactionId/items',
           name: 'transaction.detail',
           component: TransactionDetailView,
         },
