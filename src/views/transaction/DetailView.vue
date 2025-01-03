@@ -120,6 +120,9 @@ onMounted(async () => {
                 </div>
               </td>
             </tr>
+            <h1 class="font-semibold text-lg">
+              Total Price: {{ Number.formatRupiah(transaction.total_price) }}
+            </h1>
           </tbody>
           <tbody v-else>
             <tr class="hover:bg-gray-100">
