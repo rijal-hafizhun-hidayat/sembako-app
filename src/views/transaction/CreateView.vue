@@ -10,6 +10,8 @@ import type { AxiosError, AxiosResponse } from 'axios'
 import api from '@/plugins/api'
 import { Number } from '@/utils/number'
 import { Format } from '@/utils/format'
+import { SweetAlert } from '@/utils/sweetalert'
+import { useRouter } from 'vue-router'
 
 interface Form {
   item: Item | null
@@ -19,7 +21,13 @@ interface Form {
 interface Fetch {
   statusCode: number
   message: string
-  data: Item[]
+  data: Item[] | Transaction
+}
+interface Transaction {
+  id: number
+  total_price: number
+  created_at: Date
+  updated_at: Date
 }
 interface Item {
   id: number
@@ -35,6 +43,7 @@ interface LabelProps {
   price: number
 }
 
+const router = useRouter()
 const isLoading: Ref<boolean> = ref(false)
 const totalPrice: Ref<number> = ref(0)
 const batchItemQuantities = ref<number[]>([])
@@ -93,13 +102,17 @@ const send = async () => {
   console.log(totalPrice.value)
 
   try {
-    const result = await api.post('transaction', {
+    const result: AxiosResponse<Fetch> = await api.post('transaction', {
       total_price: totalPrice.value,
       qty_per_item: batchItemQuantities.value,
       items: batchItems.value,
     })
 
     console.log(result)
+    SweetAlert.successAlert(result.data.message)
+    router.push({
+      name: 'transaction.index',
+    })
   } catch (error) {
     const err = error as AxiosError
     console.log(err)
