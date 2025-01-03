@@ -112,7 +112,7 @@ const toDetailTransactionView = (transactionId: number) => {
               <td class="border-t items-center px-6 py-4 flex justify-start space-x-4">
                 <div>
                   <PrimaryButton @click="toDetailTransactionView(transaction.id)" type="button"
-                    >Detail</PrimaryButton
+                    >Detail Items</PrimaryButton
                   >
                 </div>
                 <div>
