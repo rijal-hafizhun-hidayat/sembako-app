@@ -8,6 +8,7 @@ import type { AxiosError, AxiosResponse } from 'axios'
 import api from '@/plugins/api'
 import { SweetAlert } from '@/utils/sweetalert'
 import { Timestamp } from '@/utils/timestamp'
+import { Number } from '@/utils/number'
 
 interface Fetch {
   statucCode: number
@@ -102,7 +103,9 @@ const toDetailTransactionView = (transactionId: number) => {
                 {{ index + 1 }}
               </td>
               <td class="border-t items-center px-6 py-4">{{ transaction.id }}</td>
-              <td class="border-t items-center px-6 py-4">{{ transaction.total_price }}</td>
+              <td class="border-t items-center px-6 py-4">
+                {{ Number.formatRupiah(transaction.total_price) }}
+              </td>
               <td class="border-t items-center px-6 py-4">
                 {{ Timestamp.formatTimestamp(transaction.created_at) }}
               </td>
