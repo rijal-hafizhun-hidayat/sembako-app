@@ -5,19 +5,70 @@ import { ref } from 'vue'
 
 const authStore = useAuthStore()
 const options = ref({
-  options: {
-    chart: {
-      id: 'vuechart-example',
+  chart: {
+    type: 'bar',
+    heigh: 350,
+  },
+  plotOptions: {
+    bar: {
+      horizontal: false,
+      columnWidth: '55%',
+      borderRadius: 5,
+      borderRadiusApplicaction: 'end',
     },
-    xaxis: {
-      categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998],
+  },
+  dataLabels: {
+    enabled: false,
+  },
+  stroke: {
+    show: true,
+    width: 2,
+    colors: ['transparant'],
+  },
+  xaxis: {
+    categories: [
+      'January',
+      'February',
+      'March',
+      'April',
+      'Mei',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sept',
+      'Oct',
+      'Nov',
+      'Dec',
+    ],
+  },
+  yaxis: {
+    title: {
+      text: '$ (thousands)',
+    },
+  },
+  fill: {
+    opacity: 1,
+  },
+  tooltip: {
+    y: {
+      formatter: function (val: number) {
+        return '$ ' + val + ' thousands'
+      },
     },
   },
 })
 const series = ref([
   {
-    name: 'series-1',
-    data: [30, 40, 45, 50, 49, 60, 70, 91],
+    name: 'Net Profit',
+    data: [44, 55, 57, 56, 61, 58, 63, 60, 66, 80, 76, 54],
+  },
+  {
+    name: 'Revenue',
+    data: [76, 85, 101, 98, 87, 105, 91, 114, 94, 90, 65, 32],
+  },
+  {
+    name: 'Free Cash Flow',
+    data: [35, 41, 36, 26, 45, 48, 52, 53, 41, 69, 34, 11],
   },
 ])
 </script>
