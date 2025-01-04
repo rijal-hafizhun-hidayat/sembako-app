@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import DashboardLayout from '@/layouts/DashboardLayout.vue'
+import TodaySale from '@/components/dashboard/TodaySale.vue'
+import TodayTransaction from '@/components/dashboard/TodayTransaction.vue'
 import { useAuthStore } from '@/stores/auth'
 import { ref } from 'vue'
 
@@ -86,6 +88,11 @@ const series = ref([
       <div class="bg-white mt-10 px-4 py-6 rounded shadow-md overflow-x-auto">
         <p>welcome {{ authStore.auth?.name }}</p>
       </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-rows-1 sm:grid-cols-2 sm:gap-4">
+      <TodaySale />
+      <TodayTransaction />
     </div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
