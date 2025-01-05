@@ -14,6 +14,7 @@ import TransactionIndexView from '@/views/transaction/IndexView.vue'
 import TransactionCreateView from '@/views/transaction/CreateView.vue'
 import TransactionDetailView from '@/views/transaction/DetailView.vue'
 import UserIndexView from '@/views/user/IndexView.vue'
+import UserCreateView from '@/views/user/CreateView.vue'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import { useAuthStore } from '@/stores/auth'
@@ -139,6 +140,11 @@ const router = createRouter({
           path: '',
           name: 'user.index',
           component: UserIndexView,
+        },
+        {
+          path: 'create',
+          name: 'user.create',
+          component: UserCreateView,
         },
       ],
     },
