@@ -15,6 +15,7 @@ import TransactionCreateView from '@/views/transaction/CreateView.vue'
 import TransactionDetailView from '@/views/transaction/DetailView.vue'
 import UserIndexView from '@/views/user/IndexView.vue'
 import UserCreateView from '@/views/user/CreateView.vue'
+import UserShowView from '@/views/user/ShowView.vue'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import { useAuthStore } from '@/stores/auth'
@@ -145,6 +146,11 @@ const router = createRouter({
           path: 'create',
           name: 'user.create',
           component: UserCreateView,
+        },
+        {
+          path: ':userId',
+          name: 'user.show',
+          component: UserShowView,
         },
       ],
     },
