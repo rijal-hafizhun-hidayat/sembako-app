@@ -61,6 +61,15 @@ const toUserCreateView = () => {
   })
 }
 
+const toUserShowView = (userId: number) => {
+  router.push({
+    name: 'user.show',
+    params: {
+      userId: userId,
+    },
+  })
+}
+
 const destroyUserByUserId = async (userId: number) => {
   try {
     const result: AxiosResponse<Fetch> = await api.delete(`user/${userId}`)
@@ -121,7 +130,9 @@ const destroyUserByUserId = async (userId: number) => {
               </td>
               <td class="border-t items-center px-6 py-4 flex justify-start space-x-4">
                 <div>
-                  <PrimaryButton type="button">Update</PrimaryButton>
+                  <PrimaryButton @click="toUserShowView(user.id)" type="button"
+                    >Update</PrimaryButton
+                  >
                 </div>
                 <div>
                   <DangerButton @click="destroyUserByUserId(user.id)" type="button"
