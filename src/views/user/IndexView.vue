@@ -7,6 +7,7 @@ import type { AxiosError, AxiosResponse } from 'axios'
 import api from '@/plugins/api'
 import { Timestamp } from '@/utils/timestamp'
 import { useRouter } from 'vue-router'
+import { SweetAlert } from '@/utils/sweetalert'
 
 interface Fetch {
   statucCode: number
@@ -58,6 +59,17 @@ const toUserCreateView = () => {
   router.push({
     name: 'user.create',
   })
+}
+
+const destroyUserByUserId = async (userId: number) => {
+  try {
+    const result: AxiosResponse<Fetch> = await api.delete(`user/${userId}`)
+    SweetAlert.successAlert(result.data.message)
+    users.value = users.value.filter((user) => user.id !== userId)
+  } catch (error) {
+    const err = error as AxiosError
+    console.log(err)
+  }
 }
 </script>
 <template>
@@ -112,7 +124,9 @@ const toUserCreateView = () => {
                   <PrimaryButton type="button">Update</PrimaryButton>
                 </div>
                 <div>
-                  <DangerButton type="button">Delete</DangerButton>
+                  <DangerButton @click="destroyUserByUserId(user.id)" type="button"
+                    >Delete</DangerButton
+                  >
                 </div>
               </td>
             </tr>
