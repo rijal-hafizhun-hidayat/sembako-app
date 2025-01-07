@@ -142,7 +142,7 @@ const calculateChange = () => {
     </template>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="bg-white mt-10 px-4 py-6 rounded shadow-md overflow-x-auto">
+      <div class="bg-white mt-10 px-4 py-6 rounded shadow-md">
         <form @submit.prevent="send()" class="space-y-4">
           <div>
             <InputLabel>item</InputLabel>
@@ -163,13 +163,14 @@ const calculateChange = () => {
               :taggable="false"
             ></Multiselect>
           </div>
-          <div>
+          <div class="overflow-x-auto">
             <table class="w-full whitespace-nowrap">
               <thead>
                 <tr class="text-left font-bold">
                   <th class="pb-4 pt-6 px-6">#</th>
                   <th class="pb-4 pt-6 px-6">ID Item</th>
                   <th class="pb-4 pt-6 px-6">Name</th>
+                  <th class="pb-4 pt-6 px-6">Description</th>
                   <th class="pb-4 pt-6 px-6">Qty</th>
                   <th class="pb-4 pt-6 px-6">Price/item</th>
                   <th class="pb-4 pt-6 px-6">Total price/item</th>
@@ -181,6 +182,9 @@ const calculateChange = () => {
                   <td class="border-t items-center px-6 py-4">{{ index + 1 }}</td>
                   <td class="border-t items-center px-6 py-4">{{ batchItem.id }}</td>
                   <td class="border-t items-center px-6 py-4">{{ batchItem.name }}</td>
+                  <td class="border-t items-center px-6 py-4">
+                    {{ batchItem.description ?? '-' }}
+                  </td>
                   <td class="border-t items-center px-6 py-4">
                     <TextInput
                       type="number"
