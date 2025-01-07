@@ -29,7 +29,7 @@ onMounted(async () => {
 <template>
   <div class="bg-white mt-10 px-4 py-6 rounded shadow-md overflow-x-auto flex justify-start">
     <div class="space-y-2">
-      <h1>Today's sales</h1>
+      <h1>Today's Profit</h1>
       <p class="font-semibold text-2xl">{{ Number.formatRupiah(totalPrice) }}</p>
     </div>
   </div>
