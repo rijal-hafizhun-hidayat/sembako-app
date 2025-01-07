@@ -15,6 +15,8 @@ import { useRouter } from 'vue-router'
 
 interface Form {
   item: Item | null
+  money_recieved: number
+  change: string
   total_price: number
   qty: number
 }
@@ -54,6 +56,8 @@ const form: Form = reactive({
   item: null,
   total_price: 0,
   qty: 0,
+  money_recieved: 0,
+  change: '',
 })
 
 onMounted(async () => {
@@ -76,6 +80,7 @@ const pushBatchTransaction = (item: Item | null) => {
     batchItems.value.push(item)
     batchItemQuantities.value.push(1)
     calculateTotalPrice()
+    calculateChange()
   }
 }
 
@@ -85,6 +90,7 @@ const destroyBatchItemsByItemId = (value: Item) => {
     batchItems.value.splice(index, 1)
     batchItemQuantities.value.splice(index, 1)
     calculateTotalPrice()
+    calculateChange()
   }
 }
 
@@ -93,6 +99,7 @@ const calculateTotalPrice = () => {
     const quantity = batchItemQuantities.value[index] || 0
     return total + item.price * quantity
   }, 0)
+  calculateChange()
 }
 
 const send = async () => {
@@ -117,6 +124,11 @@ const send = async () => {
     const err = error as AxiosError
     console.log(err)
   }
+}
+
+const calculateChange = () => {
+  const change = form.money_recieved - totalPrice.value
+  form.change = Number.formatRupiah(change)
 }
 </script>
 <template>
@@ -151,13 +163,14 @@ const send = async () => {
               :taggable="false"
             ></Multiselect>
           </div>
-          <div>
+          <div class="overflow-x-auto">
             <table class="w-full whitespace-nowrap">
               <thead>
                 <tr class="text-left font-bold">
                   <th class="pb-4 pt-6 px-6">#</th>
                   <th class="pb-4 pt-6 px-6">ID Item</th>
                   <th class="pb-4 pt-6 px-6">Name</th>
+                  <th class="pb-4 pt-6 px-6">Description</th>
                   <th class="pb-4 pt-6 px-6">Qty</th>
                   <th class="pb-4 pt-6 px-6">Price/item</th>
                   <th class="pb-4 pt-6 px-6">Total price/item</th>
@@ -169,6 +182,9 @@ const send = async () => {
                   <td class="border-t items-center px-6 py-4">{{ index + 1 }}</td>
                   <td class="border-t items-center px-6 py-4">{{ batchItem.id }}</td>
                   <td class="border-t items-center px-6 py-4">{{ batchItem.name }}</td>
+                  <td class="border-t items-center px-6 py-4">
+                    {{ batchItem.description ?? '-' }}
+                  </td>
                   <td class="border-t items-center px-6 py-4">
                     <TextInput
                       type="number"
@@ -195,6 +211,14 @@ const send = async () => {
               </tbody>
             </table>
           </div>
+          <div v-if="batchItems.length > 0">
+            <InputLabel>Money Received</InputLabel>
+            <TextInput
+              v-model="form.money_recieved"
+              @change="calculateChange"
+              class="block w-full mt-1"
+            />
+          </div>
           <div>
             <InputLabel>Total Price All Item</InputLabel>
             <input
@@ -204,6 +228,15 @@ const send = async () => {
               class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block w-full"
             />
             <TextInput v-model="totalPrice" :hidden="true" :disabled="true" />
+          </div>
+          <div v-if="batchItems.length > 0">
+            <InputLabel>Change</InputLabel>
+            <TextInput
+              type="text"
+              :disabled="true"
+              v-model="form.change"
+              class="block w-full mt-1"
+            />
           </div>
           <div>
             <PrimaryButton :disabled="isLoading" type="submit">submit</PrimaryButton>
